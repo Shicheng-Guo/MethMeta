@@ -1,5 +1,5 @@
 ---
-title: "CDH13 Re-Analysis"
+title: "Aberrant methylation of CDH13 can be a diagnostic biomarker for lung adenocarcinoma"
 author: "Shicheng Guo"
 date: "2016"
 output: html_document
