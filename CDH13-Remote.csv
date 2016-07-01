@@ -1,0 +1,5 @@
+group,author,sample type,age,stage1,stage2,genderatio(male%),event.e,n.e,event.c,n.c,method,aim,Multipletarget,controldesign,year,ad/(ad+sc),smoker/non-smoker,author2,author3
+1,"Hsu et al (2007, Taiwan)",plasma,66.81,,0.650793651,,19,56,5,32,MSP,Diagnose,Multiple,heter,2007,,,Hsu(Taiwan),Hsu
+3,"Ulivi et al (2006, Italy)",serum,70,0.557377049,0.721311475,0.803278689,14,61,0,15,qMSP,Diagnose,Multiple,heter,2006,0.692307692,,Ulivi(Italy),Ulivi
+4,"Zhai et al (2014, China)",serum,62.39,0.095238095,0.142857143,0.761904762,23,42,0,40,MSP,Non-diagnose,Multiple,heter,2014,0.761904762,,Zhai(China),Zhai
+5,"Zhang et al (2011, China)",plasma,59,0.320512821,0.743589744,0.743589744,37,110,2,50,MSP,Non-diagnose,Multiple,heter,2011,,,Zhang(China),Zhang

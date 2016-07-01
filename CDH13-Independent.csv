@@ -1,0 +1,14 @@
+group,author,sample type,age,stage1,stage2,male,event.e,n.e,event.c,n.c,method,aim,Multipletarget,controldesign,year,ad/(ad+sc),smoker/non-smoker,author2,author3
+1,"Dong et al (2007, Korea)",tissue,63,0.579545455,0.761363636,0.795454545,26,88,7,88,MSP,Non-diagnose,Multiple,hom,2007,0.397727273,4.5,Dong(Korea),Dong
+2,"Feng et al (2008, USA)",tissue,64.3,0.428571429,0.775510204,0.530612245,11,49,1,49,qMSP,Non-diagnose,Multiple,hom,2008,0.588235294,,Feng(USA),Feng
+3,"Hanabata et al (2004, Japan)",tissue,,0.685714286,0.842857143,0.628571429,26,70,2,30,MSP,Non-diagnose,Multiple,hom,2004,0.685714286,1.592592593,Hanabata(Japan),Hanabata
+5,"Hsu et al (2007, Taiwan)",tissue,66.81,,0.650793651,,28,63,10,63,MSP,Diagnose,Multiple,hom,2007,0.759259259,1.947368421,Hsu(Taiwan),Hsu
+6,"Jin et al (2009, Japan)",tissue,66.7,,,0.708333333,25,72,2,63,qMSP,Non-diagnose,Multiple,hom,2009,0.651515152,2.428571429,Jin(Japan),Jin
+8,"Nikolaidis et al (2012, UK)",tissue,65.58,,0.770833333,0.520833333,11,48,0,48,qMSP,Diagnose,Multiple,hom,2012,0.5,23,Nikolaidis(UK),Nikolaidis
+9,"Toyooka et al(2001, USA)",tissue,,,,,18,42,2,25,MSP,Non-diagnose,Single,hom,2001,0.738095238,,Toyooka(USA),Toyooka
+10,"Toyooka et al(2003, USA)",tissue,63,,,0.690661479,180,514,5,84,MSP,Non-diagnose,Multiple,hom,2003,0.606490872,2.825757576,Toyooka(USA),Toyooka
+11,"Tsou et al (2007, USA)",tissue,,,,,39,51,24,49,qMSP,Diagnose,Multiple,both,2007,1,,Tsou(USA),Tsou
+12,"Ulivi et al (2006, Italy)",serum,70,0.557377049,0.721311475,0.803278689,14,61,0,15,qMSP,Diagnose,Multiple,heter,2006,0.692307692,,Ulivi(Italy),Ulivi
+13,"Wang et al (2008, China)",tissue,,,,0.607142857,15,28,3,12,MSP,Diagnose,Multiple,hom,2008,0.681818182,,Wang(China),Wang
+15,"Zhai et al (2014, China)",serum,62.39,0.095238095,0.142857143,0.761904762,23,42,0,40,MSP,Non-diagnose,Multiple,heter,2014,0.761904762,,Zhai(China),Zhai
+16,"Zhang et al (2011, China)",tissue,59,0.320512821,0.743589744,0.743589744,38,78,8,78,MSP,Non-diagnose,Multiple,hom,2011,0.454545455,1.689655172,Zhang(China),Zhang
