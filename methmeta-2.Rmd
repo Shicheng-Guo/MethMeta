@@ -1,6 +1,6 @@
 ---
 title: "CDH13 Re-Analysis"
-author: "puweilin"
+author: "Shicheng Guo"
 date: "2016"
 output: html_document
 ---
