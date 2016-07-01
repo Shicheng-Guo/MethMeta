@@ -1,0 +1,355 @@
+---
+title: "CDH13 Re-Analysis"
+author: "puweilin"
+date: "2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#**Included Packages**
+```{r Included Packages, warning=FALSE, message=FALSE,echo=FALSE,echo=FALSE}
+library(xlsx)
+library(ggthemes)
+library(ggsci)
+library(ggplot2)
+library(knitr)
+library(meta)
+library(meta4diag)
+library(INLA)
+library(mada)
+source("f:/My_Paper/GSTP1/SROC.R")
+setwd("C:/Users/shicheng/Downloads/")
+```
+
+
+#**Load Data**
+```{r,warning=FALSE, message=FALSE,echo=FALSE}
+setwd("f:/My_Paper/CDH13/R-Analysis.2016.6.15/")
+CDH13.total  = read.csv("CDH13-Independent.csv", header = T)
+CDH13.tissue = read.csv("CDH13-Tissue.csv",      header = T)
+CDH13.remote = read.csv("CDH13-Remote.csv",      header = T)
+```
+
+#**Print The Overall Forest Plot with The Independent Studies**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=12,fig.height=12}
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = CDH13.total, studlab = author ,method ="MH",method.tau="DL", sm="OR")
+#Shwoing The Result of CDH13.Statbin
+CDH13.Statin
+#Showing the forestplot of the CDH13 
+forest(CDH13.Statin,lab.e="NSCLC",lab.c="Normal",leftcols=c("studlab","event.e","n.e","event.c","n.c"), leftlabs = c("Study","Methylated","Total","Methylated","Total"), rightcols = c("effect","ci","w.fixed","w.random"))
+meta1=CDH13.Statin
+pdf("ForestPlot.pdf",width = 11, height = 11)
+forest(CDH13.Statin,lab.e="NSCLC",lab.c="Normal",leftcols=c("studlab","event.e","n.e","event.c","n.c"), leftlabs = c("Study","Methylated","Total","Methylated","Total"), rightcols = c("effect","ci","w.fixed","w.random"))
+dev.off()
+```
+
+#**Print The Forest Plot Based on Tissue or Non-tissue**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=12,fig.height=12}
+CDH13.tissue = CDH13.tissue[,-3]
+CDH13.combine = rbind(CDH13.tissue,CDH13.remote)
+CDH13.combine$Type = c(rep("Tissue",dim(CDH13.tissue)[1]), rep("Non-tissue", dim(CDH13.remote)[1]))
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = CDH13.combine, studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = Type)
+#Shwoing The Result of CDH13.Statbin
+CDH13.Statin
+
+#Save the figure as pdf format
+pdf("Subgroup-Sample.Type.pdf",width = 11, height = 11)
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+dev.off() 
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+
+```
+
+#**Print The Forest Plot Based on Diagnose/Non-Diagnose**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=12,fig.height=12}
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = CDH13.total, studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = aim)
+#Save the figure as pdf format
+pdf("Subgroup-Aim.pdf",width = 11, height = 11)
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+dev.off() 
+#Shwoing The Result of CDH13.Statbin
+CDH13.Statin
+
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+
+```
+
+
+#**Print The Forest Plot Based on Methods**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=12,fig.height=12}
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = CDH13.total, studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = method)
+#Save the figure as pdf format
+pdf("Subgroup-Method.pdf",width = 11, height = 11)
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+dev.off() 
+#Shwoing The Result of CDH13.Statbin
+CDH13.Statin
+
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+
+```
+
+
+#**Print The Forest Plot Based on AD%**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=12,fig.height=12}
+cutoff=0.65
+CDH13.total$AD.percent = ifelse(CDH13.total$ad..ad.sc. < cutoff, "AD% <65%"," AD% >=65%")
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = CDH13.total, studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = AD.percent)
+#Save the figure as pdf format
+pdf("Subgroup-ADpercent.pdf",width = 11, height = 11)
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+dev.off() 
+#Shwoing The Result of CDH13.Statbin
+CDH13.Statin
+
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+
+```
+
+
+
+#**Print The Forest Plot Based on AD% in Non-diagnosis Subgroup**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=12,fig.height=12}
+cutoff=0.65
+CDH13.total$AD.percent = ifelse(CDH13.total$ad..ad.sc. < cutoff, "AD% <65%","AD% >=65%")
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = CDH13.total[which(CDH13.total$aim=="Non-diagnose"),], studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = AD.percent)
+#Save the figure as pdf format
+pdf("Subgroup-ADpercent.In.Non-diagnosis.pdf",width = 11, height = 11)
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+dev.off() 
+#Shwoing The Result of CDH13.Statbin
+CDH13.Statin
+
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+
+```
+
+
+#**Trim and Fill Analysis and Funnel Plot as well as Egger test**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = CDH13.total, studlab = author ,method ="I",method.tau="DL", sm="OR")
+#Funnel Plot
+funnel(CDH13.Statin)
+pdf("Funnel.pdf",width= 8, height = 8)
+funnel(CDH13.Statin)
+dev.off()
+#trim and fill analysis
+tf1<-trimfill(CDH13.Statin,comb.fixed=T)
+tf1
+forest.meta(tf1,fontsize=6,comb.fixed=TRUE)
+pdf("trimfill.pdf",width= 8, height = 8)
+forest.meta(tf1,fontsize=6,comb.fixed=TRUE) 
+dev.off()
+#Egger test
+metabias(CDH13.Statin, plotit=T, method.bias = "score")
+pdf("Eggertest.pdf",width= 8, height = 8)
+metabias(CDH13.Statin, plotit=T, method.bias = "score")
+dev.off()
+```
+
+#**Leave one meta-analysis**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+metainf(CDH13.Statin, pooled = "fixed")
+forest(metainf(CDH13.Statin, pooled = "fixed"))
+pdf("leaveone.pdf",width= 8, height = 8)
+forest(metainf(CDH13.Statin, pooled = "fixed"))
+dev.off()
+```
+
+#**SROC Analysis Based on meta4diag package**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+studynames = CDH13.total$author
+TP         = CDH13.total$event.e
+FP         = CDH13.total$event.c
+TN         = CDH13.total$n.c - CDH13.total$event.c
+FN         = CDH13.total$n.e - CDH13.total$event.e
+data3 = data.frame(studynames, TP,FP,TN,FN)
+res = meta4diag( data = data3 )
+# Plot the The SROC curve based on the meta4diag plot 
+pdf("SROC.pdf",height =8, width = 8)
+spes.sens = SROC(res, est.type="mean",sroc.type = 2,line.lwd = 2,line.lty = 1,line.col = "black",dataFit = F, data.col = "black",data.cex = 1.5,data.pch = 21,data.bg = "black",crShow = F,sp.col = "black",sp.pch = 22,sp.cex = 2.5, sp.bg="black",prShow = F)
+dev.off()
+
+spes.sens = SROC(res, est.type="mean",sroc.type = 2,line.lwd = 2,line.lty = 1,line.col = "black",dataFit = F, data.col = "black",data.cex = 1.5,data.pch = 21,data.bg = "black",crShow = F,sp.col = "black",sp.pch = 22,sp.cex = 2.5, sp.bg="black",prShow = F)
+
+AUC=0
+for(i in 1:(dim(spes.sens[[1]])[1] -1)){
+  A = 1- spes.sens[[1]][,1]
+  B = spes.sens[[1]][,2]
+  AUC = AUC + ( A[i] - A[i+1])* (B[i] + B[i+1])/2
+}
+
+print( paste("AUC = ", format(AUC, digits=3)))
+pooled.sensitivity = spes.sens[[2]][2]
+pooled.specificity = spes.sens[[2]][1]
+
+print(paste("Pooled.Sensitivity = ", format(pooled.sensitivity,digits =3)))
+print(paste("Pooled Specificity = ", format(pooled.specificity,digits =3)))
+```
+
+# ***combined sensitivity and specificty and SROC(By Guoshicheng)***
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+TP<-CDH13.total$event.e
+FN<-CDH13.total$n.e - CDH13.total$event.e
+FP<-CDH13.total$event.c
+TN<-CDH13.total$n.c- CDH13.total$event.c
+data<-data.frame(TP,FN,FP,TN)
+fit.roc<-reitsma(data)
+summary(fit.roc)    # extract combined Sen and Spe from Here
+AUC(fit.roc)
+pdf("SROC2.pdf")
+plot(fit.roc, xlim = c(0,0.7), ylim = c(0,0.75),main = "Diagnostic SROC(bivariate model) for FHIT in NSCLC",cex.main=1,cex.lab=1.5,cex.axis=1.5,lwd=4,lty=3)
+lines(sroc(fit.roc), lty = 1,lwd=4)
+ROCellipse(fit.roc, lty = 3, pch = 1, d = TRUE)
+points(fpr(data), sens(data), cex = 1,pch=2,lwd=3)
+legend("bottomright", c("Observed Study","SROC", "95%CI Estimation"), pch = c(2,NA,NA), lty = c(NA,1,3),cex=1.1,lwd=4)
+dev.off()
+#Show it in html verion
+plot(fit.roc, xlim = c(0,0.7), ylim = c(0,0.75),main = "Diagnostic SROC(bivariate model) for FHIT in NSCLC",cex.main=1,cex.lab=1.5,cex.axis=1.5,lwd=4,lty=3)
+lines(sroc(fit.roc), lty = 1,lwd=4)
+points(fpr(data), sens(data), cex = 1,pch=2,lwd=3)
+legend("bottomright", c("Observed Study","SROC", "95%CI Estimation"), pch = c(2,NA,NA), lty = c(NA,1,3),cex=1.1,lwd=4)
+
+```
+
+
+# ***combined sensitivity and specificty and SROC in Tissue Group (By Guoshicheng)***
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+TP<-CDH13.tissue$event.e
+FN<-CDH13.tissue$n.e - CDH13.tissue$event.e
+FP<-CDH13.tissue$event.c
+TN<-CDH13.tissue$n.c- CDH13.tissue$event.c
+data<-data.frame(TP,FN,FP,TN)
+fit.roc<-reitsma(data)
+summary(fit.roc)    # extract combined Sen and Spe from Here
+AUC(fit.roc)
+pdf("SROC2 in Tissue Subgroup.pdf")
+plot(fit.roc, xlim = c(0,0.7), ylim = c(0,0.75),main = "Diagnostic SROC(bivariate model) for FHIT in NSCLC",cex.main=1,cex.lab=1.5,cex.axis=1.5,lwd=4,lty=3)
+lines(sroc(fit.roc), lty = 1,lwd=4)
+ROCellipse(fit.roc, lty = 3, pch = 1, d = TRUE)
+points(fpr(data), sens(data), cex = 1,pch=2,lwd=3)
+legend("bottomright", c("Observed Study","SROC", "95%CI Estimation"), pch = c(2,NA,NA), lty = c(NA,1,3),cex=1.1,lwd=4)
+dev.off()
+#Show it in html verion
+plot(fit.roc, xlim = c(0,0.7), ylim = c(0,0.75),main = "Diagnostic SROC(bivariate model) for FHIT in NSCLC in Tissue Subgroup",cex.main=1,cex.lab=1.5,cex.axis=1.5,lwd=4,lty=3)
+lines(sroc(fit.roc), lty = 1,lwd=4)
+points(fpr(data), sens(data), cex = 1,pch=2,lwd=3)
+legend("bottomright", c("Observed Study","SROC", "95%CI Estimation"), pch = c(2,NA,NA), lty = c(NA,1,3),cex=1.1,lwd=4)
+```
+
+
+
+# ***combined sensitivity and specificty and SROC in Non-Tissue Group (By Guoshicheng)***
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+TP<-CDH13.remote$event.e
+FN<-CDH13.remote$n.e - CDH13.remote$event.e
+FP<-CDH13.remote$event.c
+TN<-CDH13.remote$n.c- CDH13.remote$event.c
+data<-data.frame(TP,FN,FP,TN)
+fit.roc<-reitsma(data)
+summary(fit.roc)    # extract combined Sen and Spe from Here
+AUC(fit.roc)
+pdf("SROC2-in Non-Tissue subgroup.pdf")
+plot(fit.roc, xlim = c(0,0.7), ylim = c(0,0.75),main = "Diagnostic SROC(bivariate model) for FHIT in NSCLC",cex.main=1,cex.lab=1.5,cex.axis=1.5,lwd=4,lty=3)
+lines(sroc(fit.roc), lty = 1,lwd=4)
+ROCellipse(fit.roc, lty = 3, pch = 1, d = TRUE)
+points(fpr(data), sens(data), cex = 1,pch=2,lwd=3)
+legend("bottomright", c("Observed Study","SROC", "95%CI Estimation"), pch = c(2,NA,NA), lty = c(NA,1,3),cex=1.1,lwd=4)
+dev.off()
+#Show it in html verion
+plot(fit.roc, xlim = c(0,0.7), ylim = c(0,0.75),main = "Diagnostic SROC(bivariate model) for FHIT in NSCLC in Non-Tissue Subgroup",cex.main=1,cex.lab=1.5,cex.axis=1.5,lwd=4,lty=3)
+lines(sroc(fit.roc), lty = 1,lwd=4)
+points(fpr(data), sens(data), cex = 1,pch=2,lwd=3)
+legend("bottomright", c("Observed Study","SROC", "95%CI Estimation"), pch = c(2,NA,NA), lty = c(NA,1,3),cex=1.1,lwd=4)
+
+```
+
+#***Table 2- Some other subtype analysis results  ***
+#**1 Subtype :Age **
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+library(readxl)
+cdh13 = read_excel("SubsetAnalysisList.xlsx",sheet = 1,na = 'NA')
+cdh13 = cdh13[!is.na(cdh13$Age),]
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = cdh13, studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = Age)
+CDH13.Statin
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+
+```
+
+#**2 Subtype :Stage I % **
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+library(readxl)
+cdh13 = read_excel("SubsetAnalysisList.xlsx",sheet = 1,na = 'NA')
+cdh13 = cdh13[!is.na(cdh13$StageI),]
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = cdh13, studlab =author ,sm="OR",method ="I", method.tau="DL",byvar = StageI )
+CDH13.Statin
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+
+```
+
+#**3 Subtype :Stage I+II % **
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+library(readxl)
+cdh13 = read_excel("SubsetAnalysisList.xlsx",sheet = 1,na = 'NA')
+cdh13 = cdh13[!is.na(cdh13$`StageI+II`),]
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = cdh13, studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = `StageI+II` )
+CDH13.Statin
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+
+```
+
+#**4 Subtype :Male % **
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+library(readxl)
+cdh13 = read_excel("SubsetAnalysisList.xlsx",sheet = 1,na = 'NA')
+cdh13 = cdh13[!is.na(cdh13$`Male%`),]
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = cdh13, studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = `Male%`)
+CDH13.Statin
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+
+```
+
+#**5 Subtype :Race **
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+library(readxl)
+cdh13 = read_excel("SubsetAnalysisList.xlsx",sheet = 1,na = 'NA')
+cdh13 = cdh13[!is.na(cdh13$Race),]
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = cdh13, studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = Race)
+CDH13.Statin
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+```
+
+#**6 Subtype :ControlDesign**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+library(readxl)
+cdh13 = read_excel("SubsetAnalysisList.xlsx",sheet = 1,na = 'NA')
+cdh13 = cdh13[!is.na(cdh13$ControlDesign),]
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = cdh13, studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = ControlDesign)
+CDH13.Statin
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+```
+
+#**7 Subtype :AD%**
+```{r,warning=FALSE, message=FALSE,echo=FALSE, dpi=300, fig.width=8,fig.height=8}
+library(readxl)
+cdh13 = read_excel("SubsetAnalysisList.xlsx",sheet = 1,na = 'NA')
+cdh13 = cdh13[!is.na(cdh13$ControlDesign),]
+CDH13.Statin = metabin(event.e = event.e, n.e = n.e , event.c = event.c, n.c = n.c, data = cdh13, studlab =author ,sm="OR",method ="I",method.tau="DL",byvar = `AD%`)
+CDH13.Statin
+#Plot it in the html format
+forest.meta(CDH13.Statin,leftcols=c("studlab","effect","ci"), rightcols = FALSE,col.by = "black",bylab="")
+```
