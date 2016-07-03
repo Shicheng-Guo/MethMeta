@@ -6,6 +6,7 @@ source("https://bioconductor.org/biocLite.R")
 biocLite("meta")
 biocLite("metafor")
 biocLite("mada")
+# biocLite("lmSolve")
 
 library("meta")
 library("metafor")
